@@ -5,16 +5,107 @@
   <title>Timing</title>
 
   <link rel="stylesheet" href="bower_components/reveal.js/css/reveal.css">
-  <link rel="stylesheet" href="bower_components/reveal.js/css/theme/white.css" id="theme">
+  <link rel="stylesheet" href="bower_components/reveal.js/css/theme/black.css" id="theme">
+  <style type="text/css">
+
+    body {
+      -webkit-font-smoothing:antialiased;
+    }
+    code{
+      display: block;
+      width:80%;
+      text-align: left;
+    }
+    code.output {
+      opacity: 0.2;
+    }
+    code.input:before{
+      content:'>';
+      opacity: 0.2;
+      width: 1em;
+      display: inline-block;
+    }
+    code.output:before{
+      content:'<';/*‹›*/
+      opacity: 0.2;
+      width: 1em;
+      display: inline-block;
+    }
+  </style>
 </head>
 <body>
 
   <div class="reveal">
     <div class="slides">
+
       <section>
-        <h1>Timing</h1>
-        <h2>Ben Foxall</h2>
+
+        <section>
+          <h1>Timing</h1>
+          <h2>[some-url]</h2>
+        </section>
+
+        <section>
+          <h1>Hello</h1>
+        </section>
+
+        <section>
+          <h1>[wo]</h1>
+        </section>
+
+        <section>
+          <h1>[jsox]</h1>
+        </section>
+
+        <section>
+          <h1>[soh]</h1>
+        </section>
+
       </section>
+      <section>
+
+        <section>
+          <h1>Timing</h1>
+        </section>
+
+        <section>
+          <code class="input">var now = new Date()</code>
+        </section>
+
+
+        <section>
+          <code class="input">now.getYear()</code>
+          <code class="output fragment">115</code>
+        </section>
+
+        <section data-background="img/y2k.gif"></section>
+
+
+        <section>
+          <code class="input">now.getFullYear()</code>
+          <code class="output fragment">2015</code>
+        </section>
+
+
+        <section>
+          <code class="input">now.getHours()</code>
+          <code class="output fragment">15</code>
+
+          <code class="input fragment">now.getMinutes()</code>
+          <code class="output fragment">10</code>
+
+          <code class="input fragment">now.getSeconds()</code>
+          <code class="output fragment">10</code>
+        </section>
+
+
+        <section>
+          <code class="input">now.getTime()</code>
+          <code class="output fragment">1433186404376</code>
+        </section>
+
+      </section>
+
     </div>
   </div>
 
@@ -24,9 +115,37 @@
   <script>
     Reveal.initialize({
       controls: false,
+      progress: false,
+      history: true,
       transition: 'slide',
       transitionSpeed: 'fast',
     });
+
+    /*
+setInterval(function(){
+  var t = Date.now();
+  document.body.style.background = 
+    // 'hsl(' + t/1000%360 + ',100%,50%)';
+    'hsl(180,50%,'+
+      (Math.sin((t*Math.PI*2)/1000) + 1) * 20
+      +'%)';
+  
+},10)
+
+
+function render(){
+  requestAnimationFrame(render)
+  var t = Date.now();
+  document.body.style.background = 
+    // 'hsl(' + t/1000%360 + ',100%,50%)';
+    'hsl(180,50%,'+
+      (Math.sin((t*Math.PI*2)/1000) + 1) * 20
+      +'%)';
+  
+
+}
+
+    */
   </script>
 </body>
 </html>
