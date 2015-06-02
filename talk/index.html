@@ -31,6 +31,13 @@
       width: 1em;
       display: inline-block;
     }
+
+    .reveal code.output.fragment{
+      opacity: 0;
+    }
+    .reveal code.output.fragment.visible{
+      opacity: 0.2;
+    }
   </style>
 </head>
 <body>
@@ -72,36 +79,45 @@
           <code class="input">var now = new Date()</code>
         </section>
 
-
         <section>
           <code class="input">now.getYear()</code>
-          <code class="output fragment">115</code>
+          <code class="fragment output" data-script="(new Date).getYear()"></code>
         </section>
 
         <section data-background="img/y2k.gif"></section>
 
-
         <section>
           <code class="input">now.getFullYear()</code>
-          <code class="output fragment">2015</code>
+          <code class="fragment output" data-fn="(new Date).getFullYear()"></code>
         </section>
 
 
         <section>
           <code class="input">now.getHours()</code>
-          <code class="output fragment">15</code>
 
-          <code class="input fragment">now.getMinutes()</code>
-          <code class="output fragment">10</code>
+          <code class="fragment output" data-fn="(new Date).getHours()"></code>
 
-          <code class="input fragment">now.getSeconds()</code>
-          <code class="output fragment">10</code>
+          <code class="fragment input">now.getMinutes()</code>
+          <code class="fragment output" data-fn="(new Date).getMinutes()"></code>
+
+          <code class="fragment input">now.getSeconds()</code>
+
+          <code class="fragment output" data-fn="(new Date).getSeconds()"></code>
+
+          <code class="fragment input">now.getMilliseconds()</code>
+          <code class="fragment output" data-fn="(new Date).getMilliseconds()"></code>
         </section>
-
 
         <section>
           <code class="input">now.getTime()</code>
-          <code class="output fragment">1433186404376</code>
+          <code class="fragment output" data-fn="(new Date).getTime()"></code>
+        </section>
+
+        <section>
+          <!-- <code data-fn="bgFrame()"></code> -->
+        </section>
+
+        <section>
         </section>
 
       </section>
@@ -109,7 +125,7 @@
     </div>
   </div>
 
-  <script src="bower_components/reveal.js/lib/js/head.min.js"></script>
+  <fn src="bower_components/reveal.js/lib/js/head.min.js"></fn>
   <script src="bower_components/reveal.js/js/reveal.js"></script>
 
   <script>
@@ -120,6 +136,46 @@
       transition: 'slide',
       transitionSpeed: 'fast',
     });
+
+
+    function liveOutput(slide){
+
+      var fns = [].map.call(slide.querySelectorAll('[data-fn]'), function(el){
+        var fn = Function('return ' + el.dataset.fn);
+        return function(){
+          el.innerText = fn() || '';
+        }
+      });
+
+      if(fns.length) requestAnimationFrame(render);
+
+      function render(){
+        if(slide != Reveal.getCurrentSlide()) return;
+
+        requestAnimationFrame(render);
+
+        fns.forEach(function(f){f()})
+      }
+    }
+
+    Reveal.addEventListener('slidechanged', function(event) {
+      liveOutput(event.currentSlide)
+    });
+
+    liveOutput(Reveal.getCurrentSlide())
+
+
+
+    // function bgFrame()
+    //  var t = window.performance.now()
+    //   var c = 
+    //     'hsl('+
+    //       (t/50) % 360
+    //       +',50%,10'
+    //       // + (Math.sin((t*Math.PI*2)/2000) + 1) * 20
+    //       +'%)';
+    //   document.body.style.background = c;
+    // }
 
     /*
 setInterval(function(){
@@ -141,11 +197,8 @@ function render(){
     'hsl(180,50%,'+
       (Math.sin((t*Math.PI*2)/1000) + 1) * 20
       +'%)';
-  
-
 }
-
-    */
+*/
   </script>
 </body>
 </html>
