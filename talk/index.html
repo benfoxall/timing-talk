@@ -8,6 +8,11 @@
   <link rel="stylesheet" href="bower_components/reveal.js/css/theme/black.css" id="theme">
   <style type="text/css">
 
+    .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+      font-family: Gotham, 'Source Sans Pro', Helvetica, sans-serif;
+      font-weight: 200;
+    }
+
     body {
       -webkit-font-smoothing:antialiased;
     }
@@ -15,6 +20,8 @@
       display: block;
       width:80%;
       text-align: left;
+      padding-left: 1em;
+      white-space: pre;
     }
     code.output {
       opacity: 0.2;
@@ -23,12 +30,14 @@
       content:'>';
       opacity: 0.2;
       width: 1em;
+      margin-left:-1em;
       display: inline-block;
     }
     code.output:before{
       content:'<';/*‹›*/
       opacity: 0.2;
       width: 1em;
+      margin-left:-1em;
       display: inline-block;
     }
 
@@ -37,6 +46,12 @@
     }
     .reveal code.output.fragment.visible{
       opacity: 0.2;
+    }
+    script.visible{
+      display: block;
+      white-space: pre;
+      text-align: left;
+      width:80%;
     }
   </style>
 </head>
@@ -76,49 +91,81 @@
         </section>
 
         <section>
+          <h1>&lt;facts&gt;</h1>
+        </section>
+
+        <section>
           <code class="input">var now = new Date()</code>
         </section>
 
         <section>
-          <code class="input">now.getYear()</code>
-          <code class="fragment output" data-script="(new Date).getYear()"></code>
-        </section>
-
-        <section data-background="img/y2k.gif"></section>
-
-        <section>
           <code class="input">now.getFullYear()</code>
-          <code class="fragment output" data-fn="(new Date).getFullYear()"></code>
-        </section>
+          <code class="output" data-fn="(new Date).getFullYear()"></code>
 
-
-        <section>
           <code class="input">now.getHours()</code>
 
-          <code class="fragment output" data-fn="(new Date).getHours()"></code>
+          <code class="output" data-fn="(new Date).getHours()"></code>
 
-          <code class="fragment input">now.getMinutes()</code>
-          <code class="fragment output" data-fn="(new Date).getMinutes()"></code>
+          <code class="input">now.getMinutes()</code>
+          <code class="output" data-fn="(new Date).getMinutes()"></code>
 
-          <code class="fragment input">now.getSeconds()</code>
+          <code class="input">now.getSeconds()</code>
 
-          <code class="fragment output" data-fn="(new Date).getSeconds()"></code>
+          <code class="output" data-fn="(new Date).getSeconds()"></code>
 
-          <code class="fragment input">now.getMilliseconds()</code>
-          <code class="fragment output" data-fn="(new Date).getMilliseconds()"></code>
+          <code class="input">now.getMilliseconds()</code>
+          <code class="output" data-fn="(new Date).getMilliseconds()"></code>
         </section>
 
         <section>
           <code class="input">now.getTime()</code>
-          <code class="fragment output" data-fn="(new Date).getTime()"></code>
+          <code class="output" data-fn="(new Date).getTime()"></code>
         </section>
 
         <section>
-          <!-- <code data-fn="bgFrame()"></code> -->
+          <h1>[animation]</h1>
         </section>
 
         <section>
+          <code class="input">window.performance.now()</code>
+          <code class="output"><span 
+            class="" 
+            data-fn="~~window.performance.now()"
+          ></span><span 
+            class="fragment" 
+            data-fn="'.'+(window.performance.now() +'').split('.')[1]"
+          ></span>
+          </code>
         </section>
+
+        <section>
+          <code class="input">setInterval(draw, 17)
+
+function draw(){
+  var now = window.performance.now()
+  // …
+}</code>
+        </section>
+
+        <section>
+          <code class="input">requestAnimationFrame(draw)
+
+function draw(now){
+  requestAnimationFrame(draw)
+  // …
+}</code>
+        </section>
+
+        <section>
+          <h1>&lt;/facts&gt;</h1>
+        </section>
+
+
+        <section>
+          <h1>A, B, C</h1>
+        </section>
+
+
 
       </section>
 
@@ -138,12 +185,13 @@
     });
 
 
+    // inject any data-fn contents into the page
     function liveOutput(slide){
 
       var fns = [].map.call(slide.querySelectorAll('[data-fn]'), function(el){
         var fn = Function('return ' + el.dataset.fn);
         return function(){
-          el.innerText = fn() || '';
+          el.textContent = fn();
         }
       });
 
@@ -199,6 +247,12 @@ function render(){
       +'%)';
 }
 */
-  </script>
+
+function loop(t){
+  requestAnimationFrame(loop)
+  render(t/5000);
+}
+
+</script>
 </body>
 </html>
