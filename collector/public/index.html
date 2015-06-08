@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Collector</title>
+</head>
+<body>
+  <script type="text/javascript">
+
+    // https://gist.github.com/paulirish/5438650
+    (function(){0=="performance"in window&&(window.performance={});Date.now=Date.now||function(){return(new Date).getTime()};if(0=="now"in window.performance){var a=Date.now();performance.timing&&performance.timing.navigationStart&&(a=performance.timing.navigationStart);window.performance.now=function(){return Date.now()-a}}})();
+
+
+    // the thing we're trying to work out
+    var serverOffset = 0;
+
+    // random key for this session
+    var k = Math.random().toString(32).split('.')[1];
+
+
+    // fake perf/Date.now()
+    // var debugOffset = ((Math.random()*60000)|0)-30000;
+    // function now(){
+    //   return (Date.now ? Date.now() : (new Date).getTime()) + debugOffset;
+    // }
+
+    function now(){
+      return window.performance.now()|0;
+    }
+
+    // the duration of the last one
+    var duration = 0;
+
+    function sync(){
+
+      var start = now()
+
+      var oReq = new XMLHttpRequest();
+      oReq.onload = function(){
+
+        // server time
+        var server = parseInt(this.responseText, 10);
+
+        duration = now() - start;
+
+        serverOffset = server - start + (duration/2);
+
+        console.log(serverOffset)
+
+      };
+      oReq.open("post", "/time?t=" + start + '&d=' + duration + "&k=" + k, true);
+      oReq.send();
+
+    }
+
+    sync();
+
+    setInterval(sync, 2500)
+
+  </script>
+
+</body>
+</html>

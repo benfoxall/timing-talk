@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+
+
+<script type="text/javascript" src="/faye/client.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+var width = 600, height = 600;
+
+var svg = d3.select('body').append('svg')
+  .attr('width', width)
+  .attr('height', height)
+
+
+var data;
+
+d3.json("/data", function(error, json) {
+  if (error) return console.warn(error);
+  data = json;
+
+  draw();
+});
+
+
+
+var x = d3.scale.linear().range([0,width])
+var y = d3.scale.linear().range([height, 0])
+
+y.domain([-2000,2000]);
+var middle = height/2;
+
+var colours = d3.scale.category20c()
+var line = d3.svg.line()
+    .x(function(d){return x(d[0])})
+    .y(function(d){return y(d[1])})
+    .interpolate('monotone');
+
+function draw(){
+  var groups = svg.selectAll('g').data(data);
+
+  all = data.reduce(function(memo, item){
+    return memo.concat(item.data)
+  }, [])
+
+  var timeExtent = d3.extent(all.map(function(d){
+    return d[0]
+  }));
+
+  x.domain(timeExtent);
+
+
+  groups
+    .enter()
+    .append('g')
+    .attr('fill', function(d, i){return colours(i)})
+    .attr('stroke', function(d, i){return colours(i)})
+    .append('path')
+    .style('opacity', 0)
+    .attr('fill','none');
+
+  var points = groups
+    .selectAll('.point')
+    .data(changes);
+
+  points
+    .enter()
+    .append('circle')
+    .attr('class', 'point')
+    .attr('r', 3);
+
+  points
+    .attr('cx', function(d){return x(d[0])})
+    // .attr('cy', middle)
+    .attr('cy', function(d){return y(d[1])})
+    // .transition()
+    // .delay(function(d){
+    //   return x(d[0])
+    // })
+    // .attr('cy', function(d){return y(d[1])})
+
+  groups
+    .selectAll('path')
+    .attr("d", function(d) {return line(changes(d)); })
+    .transition()
+    .delay(1000)
+    .style('opacity',1);
+
+
+}
+
+function changes(d){
+  var diff = d.data[0][1] - d.data[0][0];
+  return d.data.map(function(d){
+    var shift = d[0] - d[1]  + diff
+    return [d[0], shift]
+  })
+}
+
+
+// realtime
+var client = new Faye.Client('/faye');
+  client.subscribe('/data', function(message) {
+    // handle message
+    console.log("DATA", message);
+
+    var match = data.filter(function(d){
+      return d.key == message[0]
+    })[0];
+
+    if(match){
+      match.data.push([
+        message[1],
+        message[2]
+      ])
+
+      draw();
+    }
+
+
+  });
+
+</script>
+</body>
+</html>
