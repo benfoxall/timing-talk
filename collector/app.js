@@ -29,7 +29,7 @@ app.post('/time', function(req, res){
   if(req.query.t && req.query.k && (k.length < 30)){
     redis.multi()
       .append(k, [n, t].join(',') + ';')
-      .expire(k, 10)
+      .expire(k, 60)
       .exec()
       .then(function(results){
         console.log(n,t)
@@ -49,7 +49,7 @@ app.post('/time', function(req, res){
               console.log(trimmed)
               return redis.multi()
                 .set(k, trimmed)
-                .expire(k, 10)
+                .expire(k, 60)
                 .exec()
             })
             .then(function(){
@@ -100,6 +100,7 @@ bayeux = new faye.NodeAdapter({mount: '/faye', timeout: 45});
 var server = app.listen(process.env.PORT || 3000, function () {
 
   bayeux.attach(server);
+
   var host = server.address().address;
   var port = server.address().port;
 
